@@ -1,0 +1,9 @@
+.navigation-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 20%;
+    background: white;
+    padding: 2rem;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}

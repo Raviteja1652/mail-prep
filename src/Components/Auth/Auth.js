@@ -33,10 +33,10 @@ const Auth = () => {
       const res = await axios.post(url, userCred);
       const data = await res.data
       console.log(data)
-      ctx.login(data.idToken, changedMail)
+      ctx.login(data.idToken, changedMail, enteredEmail)
     } catch (error) {
       console.log(error)
-      alert(error.response.data.error.message)
+      alert(error)
     }
 
     setIsLoading(false)

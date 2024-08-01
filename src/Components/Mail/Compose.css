@@ -1,0 +1,23 @@
+/* .compose {
+    position: relative;
+    right: 3%;
+} */
+
+.editor {
+    margin: 2%;
+    border: 1px solid rgb(214, 209, 209);
+    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25); */
+    border-radius: 12px;
+    height: 50vh;
+}
+
+.compose-button {
+    display: flex;
+    justify-content: center;
+}
+
+.input-boxes input {
+    margin: 1%;
+    border-radius: 5px;
+    width: 30%;
+}
