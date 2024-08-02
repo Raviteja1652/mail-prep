@@ -10,13 +10,13 @@ const Navigation = () => {
       <h1>Mail Box</h1>
       <ul>
         <li>
-          <Link to='/inbox'>Inbox</Link>
+          <Link to='/inbox' onClick={() => ctx.inboxClick()}>Inbox</Link>
         </li>
         <li>
           <Link to='/compose'>Compose</Link>
         </li>
         <li>
-          <Link to='/sent'>Sent</Link>
+          <Link to='/sent' onClick={() => ctx.sentClick()}>Sent</Link>
         </li>
         <li>
           <Link to='/logout' onClick={() => ctx.logout()}>Logout</Link>
