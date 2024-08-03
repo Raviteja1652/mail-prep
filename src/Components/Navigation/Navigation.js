@@ -5,12 +5,14 @@ import AppContext from '../../Store/AppContext';
 
 const Navigation = () => {
   const ctx = useContext(AppContext)
+  const unReadCount = ctx.inboxMails.filter(mail => !mail.isRead).length
   return (
     <div className='navigation-container'>
       <h1>Mail Box</h1>
       <ul>
         <li>
           <Link to='/inbox' onClick={() => ctx.inboxClick()}>Inbox</Link>
+          <span>{unReadCount}</span>
         </li>
         <li>
           <Link to='/compose'>Compose</Link>

@@ -16,7 +16,7 @@ const AppContextProvider = props => {
     const [token, setToken] = useState(userToken)
     const [mailId, setMailId] = useState(null)  // changed mail id
     const [userMail, setUserMail] = useState('')  // logged in mail
-    const [inboxMails, setInboxMails] = useState([{senderMail: 'someMail', subject: 'This is Subject', message: 'this is message'}])
+    const [inboxMails, setInboxMails] = useState([])
     const [sentMails, setSentMails] = useState([])
     const isLoggedIn = !!token
 
@@ -64,7 +64,7 @@ const AppContextProvider = props => {
             const data = await getRes.data
             let filteredData = [];
             for (let key in data) {
-                filteredData.push({...data[key], id: key})
+                filteredData.unshift({...data[key], id: key})
             };
             setInboxMails(filteredData)
             console.log(data)
@@ -77,11 +77,56 @@ const AppContextProvider = props => {
             const data = await getRes.data
             let filteredData = []
             for (let key in data) {
-                filteredData.push({...data[key], id: key})
+                filteredData.unshift({...data[key], id: key})
             }
             setSentMails(filteredData)
             console.log(data)
         } catch (error) { console.log(error) }
+    };
+    const changeInboxMailHandler = async (selected) => {
+        try {
+            const res = await axios.get(`https://api-calls-prep-default-rtdb.firebaseio.com/_${mailId}_inboxMails.json`)
+            const data = await res.data
+
+            let filteredData = []
+            for (let key in data) {
+                if (selected === 'all') {
+                    filteredData.unshift({...data[key], id: key})
+                } else if (selected === 'read' && data[key].isRead) {
+                    filteredData.unshift({...data[key], id: key})
+                } else if (selected === 'unread' && !data[key].isRead) {
+                    filteredData.unshift({...data[key], id: key})
+                }
+            }
+            
+            setInboxMails(filteredData)
+        } catch (error) { console.log(error) }
+        
+    };
+    const readMailHandler = async (id) => {
+        setInboxMails(prev => {
+            return prev.map(mail => mail.id === id ? {...mail, isRead: true} : mail)
+        });
+        try {
+            const url = `https://api-calls-prep-default-rtdb.firebaseio.com/_${mailId}_inboxMails/${id}.json`
+            const res = await axios.get(url)
+            const mailData = await res.data
+            mailData.isRead = true
+            const putReq = await axios.put(url, mailData)
+        } catch (error) { console.log(error) }
+    };
+    const deleteMailHandler = async (id) => {
+        try {
+            const res = await axios.delete(`https://api-calls-prep-default-rtdb.firebaseio.com/_${mailId}_inboxMails/${id}.json`)
+            const data = await res.data
+            console.log(data)
+            alert('Mail successfully deleted')
+        } catch (error) { console.log(error) }
+        setInboxMails(prev => {
+            const updated = prev.filter(mail => mail.id !== id)
+            return updated;
+        })
+        
     }
 
     const contextValue = {
@@ -94,7 +139,10 @@ const AppContextProvider = props => {
         logout: logoutHandler,
         sendMail: sendMailHandler,
         inboxClick: inboxClickHandler,
-        sentClick: sentClickHandler
+        sentClick: sentClickHandler,
+        changeInboxMails: changeInboxMailHandler,
+        readMail: readMailHandler,
+        deleteMail: deleteMailHandler,
     }
 
     return (
