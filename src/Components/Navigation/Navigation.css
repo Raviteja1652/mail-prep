@@ -1,9 +1,87 @@
 .navigation-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 100vh;
     width: 20%;
     background: white;
     padding: 2rem;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.navigation-container h1 {
+    margin-top: 30px;
+    margin-left: 40px;
+    color: rgb(43, 43, 177);
+}
+
+.navigation-links {
+    margin-top: 20px;
+}
+
+.navigation-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.navigation-links li {
+    margin-top: 20px;
+    font-size: larger;
+    padding: 5px;
+}
+
+.navigation-links a {
+    text-decoration: none;
+    color: black;
+}
+
+.navigation-links a:hover {
+    color: #007bff;
+}
+
+.navigation-links li.active {
+    background-color: #d2d2e9;
+    border-radius: 8px;
+    /* color: #ffffff; */
+}
+
+.unread-count {
+    position: relative;
+    left: 25vh;
+    color: #007bff;
+}
+
+.profile-icon {
+    position: relative;
+    top: 5vh;
+    left: 2%;
+    border: 1px solid black;
+    border-radius: 10px;
+    font-size: large;
+    background: white;
+    padding: 7px;
+}
+
+
+@media only screen and (max-width: 768px) {
+    .navigation-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background-color: #3498db;
+    }
+
+    .navigation-links.show {
+        display: flex;
+    }
+
+    .mobile-menu {
+        display: block;
+    }
+
+    .navigation-links li {
+        margin: 10px 0;
+    }
 }

@@ -1,0 +1,40 @@
+.notification {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #323232;
+    color: #ffffff;
+    padding: 16px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    opacity: 0.9;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.notification h4 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.notification p {
+    margin: 8px 0 0;
+    font-size: 14px;
+}
+
+.notification.pending {
+    background-color: #007bff;
+}
+
+.notification.success {
+    background-color: #28a745;
+}
+
+.notification.error {
+    background-color: #dc3545;
+}
+
+.notification.hide {
+    transform: translateY(100%);
+    opacity: 0;
+}

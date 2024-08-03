@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppContext from "./AppContext";
 import axios from "axios";
 
@@ -12,13 +12,21 @@ const cleanMail = mail => {
 }
 
 const AppContextProvider = props => {
-    const userToken = localStorage.getItem('token')
-    const [token, setToken] = useState(userToken)
+    const [token, setToken] = useState('')
     const [mailId, setMailId] = useState(null)  // changed mail id
     const [userMail, setUserMail] = useState('')  // logged in mail
     const [inboxMails, setInboxMails] = useState([])
     const [sentMails, setSentMails] = useState([])
-    const isLoggedIn = !!token
+    const [notification, setNotification] = useState(null)
+    const isLoggedIn = !!token;
+
+    const showNotification = (status, title, message) => {
+        setNotification({status, title, message})
+
+        setTimeout(() => {
+            setNotification(null)
+        }, 3000)
+    };
 
     const loginHandler = (token, changedMail, enteredEmail) => {
         setToken(token)
@@ -30,6 +38,9 @@ const AppContextProvider = props => {
         setMailId(prev => formatted)
 
         localStorage.setItem('mailId', changedMail)
+
+        // inboxClickHandler()     // these 2 funcs are executing on login but since mailId state doesn't update by the time, these
+        // sentClickHandler()      // returns null, ntwk call is going to _null_mails. so until we click inbox or send we wont get the mails.
     };
 
     const logoutHandler = () => {
@@ -41,12 +52,52 @@ const AppContextProvider = props => {
         localStorage.removeItem('userMail')
     };
 
+    const onPageLoad = async () => {
+        const storedToken = localStorage.getItem('token')
+        setToken(storedToken)
+
+        const storedMail = localStorage.getItem('userMail')
+        const loggedInMail = formatMail(storedMail)
+        setUserMail(prev => {return loggedInMail})
+
+        const storedCleanedMail = localStorage.getItem('mailId')
+        const formatted = formatMail(storedCleanedMail)
+        setMailId(prev => formatted)
+
+        try {
+            const res = await axios.get(`https://api-calls-prep-default-rtdb.firebaseio.com/_${formatted}_mails.json`)
+            const data = await res.data
+            let filteredData = []
+            for (let key in data) {
+                filteredData.unshift({...data[key], id: key})
+            }
+            setSentMails(filteredData)
+            console.log(filteredData)
+        } catch (error) { console.log(error) }
+
+        try {
+            const res = await axios.get(`https://api-calls-prep-default-rtdb.firebaseio.com/_${formatted}_inboxMails.json`)
+            const data = await res.data
+            let filteredData = []
+            for (let key in data) {
+                filteredData.unshift({...data[key], id: key})
+            }
+            setInboxMails(filteredData)
+            console.log(data)
+        } catch (err) { console.log(err) }
+    };
+
     const sendMailHandler = async (mail) => {
+        showNotification('pending', 'Sending...', 'Your mail is being sent')
         try {
             const postRes = await axios.post(`https://api-calls-prep-default-rtdb.firebaseio.com/_${mailId}_mails.json`, mail)
             const data = await postRes.data
+            showNotification('success', 'Mail Sent', 'Your mail was sent successfully')
             console.log(data)
-        } catch (error) { console.log(error) };
+        } catch (error) {
+            showNotification('error', 'Error', 'There was an error sending your mail')
+            console.log(error)
+        };
         
         const recepMail = mail.recipientMail
         const cleanedRecepMail = cleanMail(recepMail)
@@ -143,6 +194,8 @@ const AppContextProvider = props => {
         changeInboxMails: changeInboxMailHandler,
         readMail: readMailHandler,
         deleteMail: deleteMailHandler,
+        onLoad: onPageLoad,
+        notification: notification
     }
 
     return (

@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useRef, useState, useEffect } from 'react'
 import AppContext from '../../Store/AppContext';
 import './Inbox.css';
 
@@ -22,6 +22,14 @@ const Inbox = () => {
   const [viewMode, setViewMode] = useState('list')
   const selectedFilterRef = useRef('all')
   const ctx = useContext(AppContext)
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      ctx.inboxClick()
+    }, 5000)
+
+    return () => clearInterval(intervalId)
+  }, [])
 
   const inboxClickHandler = id => {
     const selectedMail = ctx.inboxMails.find(mail => mail.id === id)

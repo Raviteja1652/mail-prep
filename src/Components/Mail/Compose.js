@@ -33,6 +33,9 @@ const Compose = () => {
     };
 
     ctx.sendMail(mailData)
+    recepRef.current.value = ''
+    subjRef.current.value = ''
+    setEditorState(EditorState.createEmpty())
   }
 
   return (

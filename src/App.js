@@ -1,4 +1,4 @@
-import React, { Fragment, useContext } from "react";
+import React, { Fragment, useContext, useEffect } from "react";
 import Auth from "./Components/Auth/Auth";
 import AppContext from "./Store/AppContext";
 import { Switch, Route, Redirect } from "react-router-dom";
@@ -7,10 +7,16 @@ import Compose from "./Components/Mail/Compose";
 import Inbox from "./Components/Mail/Inbox";
 import Sent from "./Components/Mail/Sent";
 import Wrapper from "./Components/UI/Wrapper";
+import Notification from "./Components/UI/Notification";
 
 
 function App() {
   const ctx = useContext(AppContext);
+  // const {status, title, message} = ctx.notification
+
+  useEffect(() => {
+    ctx.onLoad()
+  }, [])
 
   return (
     <Fragment>
@@ -35,6 +41,7 @@ function App() {
           <Redirect to='/' />
         </Route> */}
       </Switch>
+      {ctx.notification && <Notification status={ctx.notification.status} title={ctx.notification.title} message={ctx.notification.message} />}
     </Fragment>
     
   );
